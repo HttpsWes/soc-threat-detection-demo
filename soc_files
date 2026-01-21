@@ -1,0 +1,18 @@
+soc-threat-detection-demo/
+│
+├── logs/                  ← folder
+│   └── sample_logs.csv    ← file
+│
+├── threat_intel/          ← folder
+│   └── malicious_ips.txt ← file
+│
+├── detector/              ← folder
+│   ├── parser.py          ← file
+│   ├── rules.py           ← file
+│   └── alerts.py          ← file
+│
+├── report/                ← folder
+│   └── report_generator.py← file
+│
+├── main.py                ← file
+└── README.md              ← file
