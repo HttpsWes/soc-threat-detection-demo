@@ -61,3 +61,22 @@ def detect_after_hours_admin_access(logs, start_hour=0, end_hour=5):
             })
 
     return alerts
+
+def detect_informational_logins(logs):
+    """
+    Creates LOW severity informational alerts for successful logins.
+    Useful for demonstrating baseline activity in the report.
+    """
+    alerts = []
+
+    for log in logs:
+        if log["event"] == "LOGIN_SUCCESS":
+            alerts.append({
+                "type": "Informational Login",
+                "ip": log["ip"],
+                "user": log["user"],
+                "severity": "LOW",
+                "time": log["timestamp"].isoformat(sep=" ")
+            })
+
+    return alerts
