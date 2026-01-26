@@ -37,3 +37,27 @@ def detect_brute_force(logs, threshold=5, window_minutes=2):
                 break  # one alert per IP
 
     return alerts
+
+def detect_after_hours_admin_access(logs, start_hour=0, end_hour=5):
+    """
+    Detects successful admin logins during after-hours.
+    """
+    alerts = []
+
+    for log in logs:
+        hour = log["timestamp"].hour
+
+        if (
+            log["event"] == "LOGIN_SUCCESS"
+            and log["user"] == "admin"
+            and start_hour <= hour < end_hour
+        ):
+            alerts.append({
+                "type": "After-Hours Admin Login",
+                "ip": log["ip"],
+                "user": log["user"],
+                "severity": "MEDIUM",
+                "time": log["timestamp"].isoformat(sep=" ")
+            })
+
+    return alerts
