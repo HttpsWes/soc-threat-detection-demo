@@ -1,3 +1,12 @@
+import uuid
+from datetime import datetime
+
+def add_metadata(alert):
+    alert["alert_id"] = str(uuid.uuid4())[:8]
+    alert["created_at"] = datetime.utcnow().isoformat(sep=" ")
+    return alert
+
+
 def load_threat_intel(filepath="threat_intel/malicious_ips.txt"):
     """
     Loads threat intel IPs from a text file into a set.
@@ -42,13 +51,15 @@ def detect_intel_hits_from_logs(logs, intel_ips):
 
     for log in logs:
         ip = log["ip"]
+
         if ip in intel_ips and ip not in seen:
-            hits.append({
+            alert = {
                 "type": "Threat Intel Match",
                 "ip": ip,
                 "severity": "HIGH",
                 "first_seen": log["timestamp"].isoformat(sep=" ")
-            })
+            }
+            hits.append(add_metadata(alert))
             seen.add(ip)
 
     return hits

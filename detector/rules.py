@@ -1,5 +1,7 @@
 from collections import defaultdict
 from datetime import timedelta
+from detector.alerts import add_metadata
+
 
 def detect_brute_force(logs, threshold=5, window_minutes=2):
     """
@@ -28,12 +30,15 @@ def detect_brute_force(logs, threshold=5, window_minutes=2):
                     break
 
             if count >= threshold:
-                alerts.append({
+                alerts.append(add_metadata({
                     "type": "Brute Force Login Attempt",
                     "ip": ip,
                     "severity": "HIGH",
+                    "confidence": 0.9,
+                    "reason": f"{count} failed login attempts within {window_minutes} minutes",
                     "attempts": count
-                })
+                }))
+
                 break  # one alert per IP
 
     return alerts
@@ -52,13 +57,16 @@ def detect_after_hours_admin_access(logs, start_hour=0, end_hour=5):
             and log["user"] == "admin"
             and start_hour <= hour < end_hour
         ):
-            alerts.append({
+            alerts.append(add_metadata({
                 "type": "After-Hours Admin Login",
                 "ip": log["ip"],
                 "user": log["user"],
                 "severity": "MEDIUM",
+                "confidence": 0.6,
+                "reason": "Admin login detected outside normal business hours",
                 "time": log["timestamp"].isoformat(sep=" ")
-            })
+            }))
+
 
     return alerts
 
@@ -71,12 +79,15 @@ def detect_informational_logins(logs):
 
     for log in logs:
         if log["event"] == "LOGIN_SUCCESS":
-            alerts.append({
-                "type": "Informational Login",
-                "ip": log["ip"],
-                "user": log["user"],
-                "severity": "LOW",
-                "time": log["timestamp"].isoformat(sep=" ")
-            })
+            alerts.append(add_metadata({
+            "type": "Informational Login",
+            "ip": log["ip"],
+            "user": log["user"],
+            "severity": "LOW",
+            "confidence": 0.2,
+            "reason": "Normal successful login activity",
+            "time": log["timestamp"].isoformat(sep=" ")
+        }))
+
 
     return alerts

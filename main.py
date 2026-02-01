@@ -31,7 +31,13 @@ if __name__ == "__main__":
 
     # Print alerts
     for alert in all_alerts:
-        print(alert)
+        if alert["severity"] != "LOW":
+            print(f"[{alert['severity']}] {alert['type']} | {alert['ip']}")
+            print(f"  Reason: {alert.get('reason')}")
+            print(f"  Confidence: {alert.get('confidence')}")
+            print()
+
+
 
     # Print report
     report = generate_report(all_alerts)
