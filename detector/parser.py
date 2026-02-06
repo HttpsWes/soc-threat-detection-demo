@@ -11,7 +11,8 @@ def parse_logs(log_file=LOG_FILE):
 
     with open(log_file, newline="") as csvfile:
         reader = csv.DictReader(csvfile)
-
+        
+        #converts sample log into a dictionary with these values
         for row in reader:
             log_entry = {
                 "timestamp": datetime.strptime(row["timestamp"], "%Y-%m-%d %H:%M:%S"),

@@ -68,12 +68,13 @@ def detect_after_hours_admin_access(logs, start_hour=0, end_hour=5):
             }))
 
 
+
     return alerts
 
 def detect_informational_logins(logs):
     """
     Creates LOW severity informational alerts for successful logins.
-    Useful for demonstrating baseline activity in the report.
+    Useful for demonstrating baseline activity.
     """
     alerts = []
 
@@ -91,3 +92,30 @@ def detect_informational_logins(logs):
 
 
     return alerts
+
+def detect_unknown_user_login(logs):
+    """
+    Detects successful logins by users who are not admins or employees.
+    """
+    alerts = []
+
+    for log in logs:
+        user = log.get("user", "")
+
+        if (
+            log["event"] == "LOGIN_SUCCESS"
+            and user != "admin"
+            and not user.startswith("employee")
+        ):
+            alerts.append(add_metadata({
+                "type": "Unauthorized User Login",
+                "ip": log["ip"],
+                "user": user,
+                "severity": "HIGH",
+                "confidence": 0.85,
+                "reason": "Successful login by non-employee, non-admin user",
+                "time": log["timestamp"].isoformat(sep=" ")
+            }))
+
+    return alerts
+

@@ -57,6 +57,8 @@ def detect_intel_hits_from_logs(logs, intel_ips):
                 "type": "Threat Intel Match",
                 "ip": ip,
                 "severity": "HIGH",
+                "confidence": 0.95,
+                "reason": "IP address matched known threat intelligence indicator",
                 "first_seen": log["timestamp"].isoformat(sep=" ")
             }
             hits.append(add_metadata(alert))
